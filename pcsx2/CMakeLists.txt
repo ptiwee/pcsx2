@@ -102,6 +102,7 @@ set(pcsx2Sources
 	R5900.cpp
 	R5900OpcodeImpl.cpp
 	R5900OpcodeTables.cpp
+	GunHooks.cpp
 	SaveState.cpp
 	ShiftJisToUnicode.cpp
 	Sif.cpp
@@ -1248,6 +1249,9 @@ if (APPLE)
 		${QUARTZCORE_LIBRARY}
 	)
 endif()
+
+find_library(SERIALPORT_LIBRARY serialport)
+target_link_libraries(PCSX2 PRIVATE ${SERIALPORT_LIBRARY}) 
 
 set_property(GLOBAL PROPERTY PCSX2_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
 set_property(GLOBAL PROPERTY PCSX2_METAL_SHADERS ${pcsx2GSMetalShaders})

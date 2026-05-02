@@ -29,6 +29,7 @@
 #include "PerformanceMetrics.h"
 #include "R3000A.h"
 #include "R5900.h"
+#include "GunHooks.h"
 #include "Recording/InputRecording.h"
 #include "Recording/InputRecordingControls.h"
 #include "SIO/Memcard/MemoryCardFile.h"
@@ -1559,6 +1560,9 @@ VMBootResult VMManager::Initialize(const VMBootParameters& boot_params, Error* e
 	}
 	ScopedGuard close_fw = []() { FWclose(); };
 
+	Console.WriteLn("Opening Guns...");
+	GunHooks::InitGunHooks();
+
 	// Don't close when we return
 	close_fw.Cancel();
 	close_usb.Cancel();
@@ -1652,6 +1656,7 @@ void VMManager::Shutdown(bool save_resume_state)
 	FPControlRegister::SetCurrent(FPControlRegister::GetDefault());
 
 	Patch::UnloadPatches();
+	GunHooks::UnloadGunHooks();
 	R3000A::ioman::reset();
 	vtlb_Shutdown();
 	USBclose();
@@ -2850,6 +2855,7 @@ void VMManager::Internal::VSyncOnCPUThread()
 	Pad::UpdateMacroButtons();
 
 	Patch::ApplyVsyncPatches();
+	GunHooks::ApplyVsyncGunHooks();
 
 	// Frame advance must be done *before* pumping messages, because otherwise
 	// we'll immediately reduce the counter we just set.
