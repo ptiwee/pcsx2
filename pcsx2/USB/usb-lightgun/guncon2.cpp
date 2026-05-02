@@ -79,7 +79,7 @@ namespace usb_lightgun
 		{"SLES-51448", 90.25f, 95.0f, 420, 132, 640, 240}, // Resident Evil - Dead Aim (E)
 		{"SLUS-20669", 90.25f, 93.5f, 420, 132, 640, 240}, // Resident Evil - Dead Aim (U)
 		{"SLUS-20619", 90.25f, 91.75f, 453, 154, 640, 256}, // Starsky & Hutch (U)
-		{"SCES-50300", 90.25f, 102.75f, 390, 138, 640, 256}, // Time Crisis II (E)
+		{"SCES-50300", 90.25f, 102.75f, 442, 138, 640, 256}, // Time Crisis II (E)
 		{"SLUS-20219", 90.25f, 97.5f, 390, 154, 640, 240}, // Time Crisis 2 (U)
 		{"SCES-51844", 90.25f, 102.75f, 390, 138, 640, 256}, // Time Crisis 3 (E)
 		{"SLUS-20645", 90.25f, 97.5f, 390, 154, 640, 240}, // Time Crisis 3 (U)
@@ -371,6 +371,8 @@ namespace usb_lightgun
 		const auto& [window_x, window_y] =
 			(has_relative_binds) ? GetAbsolutePositionFromRelativeAxes() : InputManager::GetPointerAbsolutePosition(0);
 		GSTranslateWindowToDisplayCoordinates(window_x, window_y, &pointer_x, &pointer_y);
+		int iwidth, iheight;
+		GSgetInternalResolution(&iwidth, &iheight);
 
 		s16 pos_x, pos_y;
 		if (pointer_x < 0.0f || pointer_y < 0.0f)
@@ -382,32 +384,27 @@ namespace usb_lightgun
 		else
 		{
 			// scale to internal coordinate system and center
-			float fx = (pointer_x * static_cast<float>(screen_width)) - static_cast<float>(screen_width / 2u);
-			float fy = (pointer_y * static_cast<float>(screen_height)) - static_cast<float>(screen_height / 2u);
+			float fx = (pointer_x * static_cast<float>(screen_width));
+			float fy = (pointer_y * static_cast<float>(screen_height));
 
-			// apply curvature scale
-			fx *= scale_x;
-			fy *= scale_y;
+			fx = pointer_x * 573 + 150;
+			fy = pointer_y * 261 + 33;
 
-			// and re-center based on game center
-			s32 x = static_cast<s32>(std::round(fx + center_x));
-			s32 y = static_cast<s32>(std::round(fy + center_y));
+			if (iheight == 256) {
+				if (port == 0) {
+					/* Player 1 */
+					fx = pointer_x * 504 + 169;
+				} else {
+					/* Player 2 */
+					fx = pointer_x * 508 + 203;
+				}
 
-			// apply game-configured offset
-			if (param_mode & GUNCON2_FLAG_PROGRESSIVE)
-			{
-				x -= param_x / 2;
-				y -= param_y / 2;
-			}
-			else
-			{
-				x -= param_x;
-				y -= param_y;
+				// Apply empiric curvature
+				float curve = pointer_y + 0.25 * (pointer_y * (1 - pointer_y));
+				fy = curve * 115 + 100;
 			}
 
-			// 0,0 is reserved for offscreen, so ensure we don't send that
-			pos_x = static_cast<s16>(std::max(x, 1));
-			pos_y = static_cast<s16>(std::max(y, 1));
+			return std::tie(fx, fy);
 		}
 
 		return std::tie(pos_x, pos_y);
