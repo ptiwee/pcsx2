@@ -1142,6 +1142,8 @@ void ImGuiManager::SetSoftwareCursor(u32 index, std::string image_path, float im
 		if (is_hiding_or_showing && index == 0)
 			Host::RunOnCPUThread(&InputManager::UpdateHostMouseMode);
 	});
+
+	MTGS::WaitGS();
 }
 
 bool ImGuiManager::HasSoftwareCursor(u32 index)

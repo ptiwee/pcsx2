@@ -521,8 +521,8 @@ namespace usb_lightgun
 		if (prev_pointer_index != new_pointer_index || s->cursor_path != cursor_path ||
 			s->cursor_scale != cursor_scale || s->cursor_color != cursor_color)
 		{
-			if (prev_pointer_index != new_pointer_index)
-				ImGuiManager::ClearSoftwareCursor(prev_pointer_index);
+			//if (prev_pointer_index != new_pointer_index)
+			//	ImGuiManager::ClearSoftwareCursor(prev_pointer_index);
 
 			// Pointer changed, so need to update software cursor.
 			const bool had_software_cursor = !s->cursor_path.empty();
