@@ -1560,9 +1560,6 @@ VMBootResult VMManager::Initialize(const VMBootParameters& boot_params, Error* e
 	}
 	ScopedGuard close_fw = []() { FWclose(); };
 
-	Console.WriteLn("Opening Guns...");
-	GunHooks::InitGunHooks();
-
 	// Don't close when we return
 	close_fw.Cancel();
 	close_usb.Cancel();

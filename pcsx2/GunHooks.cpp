@@ -11,10 +11,12 @@ namespace GunHooks
 	};
 } // namespace GunHooks
 
-void GunHooks::InitGunHooks()
+void GunHooks::ReconnectGunHooks()
 {
 	struct sp_port **ports;
 	sp_list_ports(&ports);
+
+	UnloadGunHooks();
 
 	for (GunInfo& gun : guns) {
 		for (int i=0; ports[i]; i++) {

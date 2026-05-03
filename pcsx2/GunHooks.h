@@ -16,7 +16,7 @@ namespace GunHooks
 		char name[255];
 	};
 
-	extern void InitGunHooks();
+	extern void ReconnectGunHooks();
 	extern void ApplyVsyncGunHooks();
 	extern void UnloadGunHooks();
 } // namespace GunHooks

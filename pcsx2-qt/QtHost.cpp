@@ -22,6 +22,7 @@
 #include "pcsx2/GS/GS.h"
 #include "pcsx2/GSDumpReplayer.h"
 #include "pcsx2/GameList.h"
+#include "pcsx2/GunHooks.h"
 #include "pcsx2/Host.h"
 #include "pcsx2/INISettingsInterface.h"
 #include "pcsx2/ImGui/FullscreenUI.h"
@@ -1698,6 +1699,7 @@ void Host::OnInputDeviceConnected(const std::string_view identifier, const std::
 	emit g_emu_thread->onInputDeviceConnected(identifier.empty() ? QString() : QString::fromUtf8(identifier.data(), identifier.size()),
 		device_name.empty() ? QString() : QString::fromUtf8(device_name.data(), device_name.size()));
 
+	GunHooks::ReconnectGunHooks();
 
 	if (VMManager::HasValidVM() || g_emu_thread->isRunningFullscreenUI())
 	{
