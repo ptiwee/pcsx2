@@ -24,6 +24,7 @@ LZ4=1.10.0
 ZSTD=1.5.7
 PLUTOVG=1.3.2
 PLUTOSVG=0.0.7
+LIBSERIALPORT=0.1.2
 
 SHADERC=2025.4
 SHADERC_GLSLANG=7a47e2531cb334982b2a2dd8513dca0a3de4373d
@@ -49,6 +50,7 @@ c693867f10a7760ef1bcf85419d51783586768cc2c601d03841bc6a8b2554b9c  shaderc-spirv-
 06b0a042f2e121e954badb4fd78c9e2d4bc7ed6087eceb26ab559c23cf94334f  shaderc-spirv-tools-$SHADERC_SPIRVTOOLS.tar.gz
 7bd4e79ce18b1d47517e7e91fbb7cf19d4f01942804a519bc7c0bf32b6325dd5  plutovg-$PLUTOVG.tar.gz
 78561b571ac224030cdc450ca2986b4de915c2ba7616004a6d71a379bffd15f3  plutosvg-$PLUTOSVG.tar.gz
+5deb92b5ca72c0347b07b786848350deca2dcfd975ce613b8e0e1d947a4b4ca9  libserialport-$LIBSERIALPORT.tar.gz
 EOF
 
 curl -L \
@@ -66,7 +68,8 @@ curl -L \
         -o "shaderc-spirv-headers-$SHADERC_SPIRVHEADERS.tar.gz" "https://github.com/KhronosGroup/SPIRV-Headers/archive/$SHADERC_SPIRVHEADERS.tar.gz" \
         -o "shaderc-spirv-tools-$SHADERC_SPIRVTOOLS.tar.gz" "https://github.com/KhronosGroup/SPIRV-Tools/archive/$SHADERC_SPIRVTOOLS.tar.gz" \
         -o "plutovg-$PLUTOVG.tar.gz" "https://github.com/sammycage/plutovg/archive/v$PLUTOVG.tar.gz" \
-        -o "plutosvg-$PLUTOSVG.tar.gz" "https://github.com/sammycage/plutosvg/archive/v$PLUTOSVG.tar.gz"
+        -o "plutosvg-$PLUTOSVG.tar.gz" "https://github.com/sammycage/plutosvg/archive/v$PLUTOSVG.tar.gz" \
+        -o "libserialport-$LIBSERIALPORT.tar.gz" "https://sigrok.org/download/source/libserialport/libserialport-$LIBSERIALPORT.tar.gz"
 
 shasum -a 256 --check SHASUMS
 
@@ -171,6 +174,15 @@ cd "plutosvg-$PLUTOSVG"
 cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_PREFIX_PATH="$INSTALLDIR" -DCMAKE_INSTALL_PREFIX="$INSTALLDIR" -DBUILD_SHARED_LIBS=ON -DPLUTOSVG_ENABLE_FREETYPE=ON -DPLUTOSVG_BUILD_EXAMPLES=OFF -B build -G Ninja
 cmake --build build --parallel
 ninja -C build install
+cd ..
+
+echo "Building libserialport..."
+rm -fr "libserialport-$LIBSERIALPORT"
+tar xf "libserialport-$LIBSERIALPORT.tar.gz"
+cd "libserialport-$LIBSERIALPORT"
+./configure --prefix="$INSTALLDIR"
+make
+make install
 cd ..
 
 echo "Building shaderc..."
